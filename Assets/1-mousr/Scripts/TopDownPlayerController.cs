@@ -7,10 +7,15 @@ public class TopDownPlayerController : MonoBehaviour {
 	void FixedUpdate () {
 		var h = Input.GetAxis ("Horizontal");
 		var v = Input.GetAxis ("Vertical");
+
 		if (Input.GetButtonDown ("Jump") && !Loaded) {
 			Loaded = true;
 			WorldGenerator.GenerateWorld(8,8);
+			Destroy(GameObject.Find("StartMessage"));
 		}
-		rigidbody2D.velocity = new Vector2 (h * MoveSpeed, v * MoveSpeed);
+
+		if (Loaded) {
+			rigidbody2D.velocity = new Vector2 (h * MoveSpeed, v * MoveSpeed);
+		}
 	}
 }
