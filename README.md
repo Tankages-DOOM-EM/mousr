@@ -1,7 +1,7 @@
 Mousr
 -----
 
-A top-down maze game built with [Unity2D](http://unity3d.com/unity/whats-new).
+A top-down maze game built with [Unity2D](http://unity3d.com/unity/whats-new). Play it [here](WebBuild/mousr/mousr.html).
 
 Controls
 --------
