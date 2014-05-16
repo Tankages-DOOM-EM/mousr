@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class DirectionException : System.Exception {
-	public DirectionException(string message) : this(message) {}
+	public DirectionException(string message) : base(message) {}
 }
 
 public class Direction {
@@ -32,7 +32,7 @@ public class Direction {
 		Shuffled [3] = West;
 
 		for (var i = 0; i < 4; ++i) {
-			var i2 = Random.Range (i, 4);
+			var i2 = MazeRandom.Next (i, 4);
 			var tmp = Shuffled[i];
 			Shuffled[i] = Shuffled[i2];
 			Shuffled[i2] = tmp;
