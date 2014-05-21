@@ -3,19 +3,47 @@ using System.Collections;
 
 public class TopDownPlayerController : MonoBehaviour {
 	public float MoveSpeed = 1.0f;
-	private bool Loaded = false;
-	void FixedUpdate () {
-		var h = Input.GetAxis ("Horizontal");
-		var v = Input.GetAxis ("Vertical");
+	public int WorldSize = 8;
 
-		if (Input.GetButtonDown ("Jump") && !Loaded) {
-			Loaded = true;
-			WorldGenerator.GenerateWorld(8,8);
-			Destroy(GameObject.Find("StartMessage"));
+	private bool Loaded = false;
+	public bool ControlsLocked = false;
+	private GameObject IntroText;
+	private GameObject Dimmer;
+	private LevelManager LevelManager;
+
+	void Start() {
+		IntroText = GameObject.Find ("IntroText");
+		Dimmer = GameObject.Find ("Dimmer");
+		LevelManager = gameObject.GetComponent<LevelManager>();
+	}
+
+	void FixedUpdate () {
+
+		if (!Loaded) {
+			if (Input.GetButtonDown ("Jump")) {
+				Debug.Log ("loaded!");
+				Loaded = true;
+				IntroText.SetActive(false);
+				Dimmer.SetActive(false);
+				LevelManager.LoadNextLevel();
+			}
+			return;
 		}
 
-		if (Loaded) {
-			rigidbody2D.velocity = new Vector2 (h * MoveSpeed, v * MoveSpeed);
+		if (ControlsLocked) {
+			return;
+		}
+
+		var hInput = Input.GetAxis ("Horizontal");
+		var vInput = Input.GetAxis ("Vertical");
+
+		rigidbody2D.velocity = new Vector2 (hInput * MoveSpeed, vInput * MoveSpeed);
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "Goal") {
+			LevelManager.LoadNextLevel();
+			transform.position = new Vector3(0, 0, transform.position.z);
 		}
 	}
 }
