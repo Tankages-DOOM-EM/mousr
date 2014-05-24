@@ -1,4 +1,4 @@
-### [Play it here](WebBuild/mousr/mousr.html).
+### [Play it here](tankages-doom-em.github.io/mousr/WebBuild/mousr/mousr.html).
 
 mousr
 -----
