@@ -23,17 +23,22 @@ public class TopDownPlayerController : MonoBehaviour {
 		Timer = GameObject.Find ("Timer").GetComponent<Timer> ();
 	}
 
+	private void SetTextActive(bool active) {
+		TitleText.SetActive(active);
+		StartMessage.SetActive(active);
+		Dimmer.SetActive(active);
+	}
+
 	void FixedUpdate () {
 		if (!Loaded) {
 			if (Input.GetButton ("Jump")) {
-				Debug.Log ("loaded!");
 				Loaded = true;
-				TitleText.SetActive(false);
-				StartMessage.SetActive(false);
-				Dimmer.SetActive(false);
+
 				LevelManager.LoadNextLevel();
+				SetTextActive(false);
 				transform.position = new Vector3(0, 0, transform.position.z);
 				Camera.transform.position = new Vector3(0, 0, Camera.transform.position.z);
+
 				Timer.ResetTimer();
 				Timer.StartTimer();
 			}
@@ -53,11 +58,8 @@ public class TopDownPlayerController : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.tag == "Goal") {
 			Timer.StopTimer ();
-			Dimmer.SetActive (true);
-			TitleText.guiText.text = "Level " + (LevelManager.CurrentLevel + 1).ToString("D2");
-			TitleText.SetActive(true);
-			StartMessage.SetActive(true);
-			Debug.Log ("Goal Collision");
+			TitleText.guiText.text = "Level Complete";
+			SetTextActive(true);
 			Loaded = false;
 		}
 	}
