@@ -1,14 +1,18 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
 	public int CurrentLevel = 0;
 	public int WorldSize = 8;
 	public GameObject LevelText;
+	public GameObject Coin;
+	public IList<GameObject> WorldCoins = new List<GameObject>();
 
 	void Start() {
-		LevelText = GameObject.Find ("LevelTextHeading");
+		LevelText = GameObject.Find ("LevelText");
+		Coin = GameObject.Find ("Coin");
 	}
 
 	public void LoadNextLevel() {
@@ -16,6 +20,7 @@ public class LevelManager : MonoBehaviour
 	}
 
 	public void LoadLevel(int level) {
+		DestroyWorldCoins ();
 		CurrentLevel = level;
 
 		int width = WorldSize,
@@ -28,6 +33,30 @@ public class LevelManager : MonoBehaviour
 
 		WorldGenerator.GenerateWorld (width, height);
 		LevelText.guiText.text = "Level " + CurrentLevel.ToString ();
+		CreateCoins (width, height, 10);
+	}
+
+	private void DestroyWorldCoins() {
+		foreach (var coin in WorldCoins) {
+			if(coin) {
+				Destroy (coin);
+			}
+		}
+		WorldCoins.Clear ();
+	}
+
+	private void CreateCoins(int width, int height, int count) {
+		var goalPos = Convert.WorldToUnit (WorldGenerator.Goal.transform.position);
+		for (var i = 0; i < count; ++i) {
+			var x = MazeRandom.Next (0, width);
+			var y = MazeRandom.Next(0, height);
+			while(goalPos.X == x && goalPos.Y == y) {
+				x = MazeRandom.Next (0, width);
+				y = MazeRandom.Next(0, height);
+			}
+			WorldCoins.Add (Instantiate(Coin, Convert.UnitToWorld(x,y), Quaternion.identity) as GameObject);
+		}
+
 	}
 }
 

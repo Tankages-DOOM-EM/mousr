@@ -7,25 +7,35 @@ public class TopDownPlayerController : MonoBehaviour {
 
 	private bool Loaded = false;
 	public bool ControlsLocked = false;
-	private GameObject IntroText;
 	private GameObject Dimmer;
 	private LevelManager LevelManager;
+	private GameObject Camera;
+	private Timer Timer;
+	private GameObject TitleText;
+	private GameObject StartMessage;
 
 	void Start() {
-		IntroText = GameObject.Find ("IntroText");
+		TitleText = GameObject.Find ("TitleText");
+		StartMessage = GameObject.Find ("StartMessage");
 		Dimmer = GameObject.Find ("Dimmer");
 		LevelManager = gameObject.GetComponent<LevelManager>();
+		Camera = GameObject.Find ("Camera");
+		Timer = GameObject.Find ("Timer").GetComponent<Timer> ();
 	}
 
 	void FixedUpdate () {
-
 		if (!Loaded) {
-			if (Input.GetButtonDown ("Jump")) {
+			if (Input.GetButton ("Jump")) {
 				Debug.Log ("loaded!");
 				Loaded = true;
-				IntroText.SetActive(false);
+				TitleText.SetActive(false);
+				StartMessage.SetActive(false);
 				Dimmer.SetActive(false);
 				LevelManager.LoadNextLevel();
+				transform.position = new Vector3(0, 0, transform.position.z);
+				Camera.transform.position = new Vector3(0, 0, Camera.transform.position.z);
+				Timer.ResetTimer();
+				Timer.StartTimer();
 			}
 			return;
 		}
@@ -42,8 +52,13 @@ public class TopDownPlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.tag == "Goal") {
-			LevelManager.LoadNextLevel();
-			transform.position = new Vector3(0, 0, transform.position.z);
+			Timer.StopTimer ();
+			Dimmer.SetActive (true);
+			TitleText.guiText.text = "Level " + (LevelManager.CurrentLevel + 1).ToString("D2");
+			TitleText.SetActive(true);
+			StartMessage.SetActive(true);
+			Debug.Log ("Goal Collision");
+			Loaded = false;
 		}
 	}
 }

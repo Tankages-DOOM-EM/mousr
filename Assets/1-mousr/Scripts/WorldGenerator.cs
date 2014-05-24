@@ -12,6 +12,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	public enum Mode {Newest = 1, Random};
 	public static Mode CurrentMode = Mode.Newest;
+	public static GameObject Goal = null;
 
 	private static Point2D MaxPoint;
 	private static Point2D MinPoint;
@@ -162,7 +163,7 @@ public class WorldGenerator : MonoBehaviour {
 		for (var x = 0; x < MaxPoint.X; ++x) {
 			for (var y = 0; y < MaxPoint.Y; ++y) {
 				var obj = CreateGameObjectFromExitDefinition(Grid[x,y]);
-				obj.transform.position = UnitToWorld.Convert (x, y);
+				obj.transform.position = Convert.UnitToWorld (x, y);
 				MazeObjects.Add(obj);
 			}
 		}
@@ -172,6 +173,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// Destroy existing maze objects and clears the maze object array.
 	/// </summary>
 	private static void ClearMazeObjects() {
+		Destroy (Goal);
 		foreach (var obj in MazeObjects) {
 			Destroy (obj);
 		}
@@ -179,15 +181,32 @@ public class WorldGenerator : MonoBehaviour {
 		MazeObjects.Clear ();
 	}
 
+	public static IEnumerable<GameObject> GetDeadEnds() {
+		return MazeObjects.Where (o => o.name.Contains ("DeadEnd"));
+	}
+	
+	public static IEnumerable<GameObject> GetHallways() {
+		return MazeObjects.Where (o => o.name.EndsWith ("Corridor"));
+	}
+	
+	public static IEnumerable<GameObject> GetThreeExitRooms() {
+		return MazeObjects.Where (o => o.name.StartsWith ("allExcept"));
+	}
+	
+	public static IEnumerable<GameObject> GetCornerRooms() {
+		return MazeObjects.Where (o => o.name.Contains ("And"));
+	}
+	
+	public static IEnumerable<GameObject> GetFourExitRooms() {
+		return MazeObjects.Where (o => o.name.Equals ("allWayRoom"));
+	}
+
 	private static void ChooseGoalRoom() {
-		var deadEnds = MazeObjects
-			.Where (o => o.name.Contains ("DeadEnd"))
+		var deadEnds = GetDeadEnds()
 			.OrderByDescending (o => o.transform.position.magnitude)
 			.Take (3);
 		var goalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
-		var goal = Instantiate (GameObject.FindGameObjectWithTag ("Goal")) as GameObject;
-		goal.transform.parent = goalRoom.transform;
-		goal.transform.localPosition = new Vector3(0, 0, -0.5f);
+		Goal = Instantiate (GameObject.FindGameObjectWithTag ("Goal"), goalRoom.transform.position, Quaternion.identity) as GameObject;
 	}
 
 	/// <summary>
