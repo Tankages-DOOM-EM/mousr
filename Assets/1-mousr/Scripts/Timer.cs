@@ -22,7 +22,11 @@ public class Timer : MonoBehaviour {
 	public void ResetTimer() {
 		TimeRemaining = LevelSeconds;
 	}
-	
+
+	public void AddTime (float seconds) {
+		TimeRemaining += seconds;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (Running) {

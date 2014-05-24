@@ -19,12 +19,13 @@ Features
 - :white_check_mark: Goal
 - :white_check_mark: Timer
 - :white_check_mark: Score
-- :white_large_square: Collectables
+- :white_check_mark: Collectables
   - :white_check_mark: coins
-  - :white_large_square: time boost
+  - :white_check_mark: time boost
 - :white_large_square: Fog of War
 - :white_large_square: Doors & switches/keys
 - :white_large_square: effects
+  - :white_large_square: score/point text w/ fade for collect
   - :white_large_square: coin collect
   - :white_large_square: time boost collect
   - :white_large_square: level complete

@@ -4,7 +4,7 @@ using System.Collections;
 public class Collector : MonoBehaviour {
 	private ScoreManager ScoreManager;
 	private Timer Timer;
-	// Use this for initialization
+
 	void Start () {
 		ScoreManager = gameObject.GetComponent<ScoreManager> ();
 		Timer = GameObject.Find ("Timer").GetComponent<Timer> ();
@@ -15,12 +15,20 @@ public class Collector : MonoBehaviour {
 		case "Coin":
 			HandleCoin(other.gameObject);
 			return;
+		case "TimeBoost":
+			HandleTimeBoost(other.gameObject);
+			return;
 		case "Goal":
 			HandleGoal(other.gameObject);
 			return;
 		default:
 			break;
 		}
+	}
+
+	private void HandleTimeBoost (GameObject timeBoost) {
+		Destroy (timeBoost);
+		Timer.AddTime (15);
 	}
 
 	private void HandleGoal(GameObject goal) {

@@ -76,7 +76,7 @@ GameObject:
   - 4: {fileID: 400008}
   - 212: {fileID: 21200006}
   m_Layer: 0
-  m_Name: prototype_red_4x1
+  m_Name: prototype_red_4x4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -122,7 +122,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 18.8555031, z: 0}
+  m_LocalPosition: {x: -105.046143, y: -99.0150604, z: 94.6948242}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400004}
@@ -138,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 2, y: 8, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 400006}
 --- !u!61 &6100000
@@ -264,7 +264,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
-  m_Sprite: {fileID: 21300000, guid: d5f474f383db84f518e4f35a755dd00f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a016afa6af4464b73bf0ddd708610500, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
