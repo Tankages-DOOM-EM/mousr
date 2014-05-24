@@ -5113,6 +5113,7 @@ GameObject:
   - 114: {fileID: 1365485799}
   - 114: {fileID: 1365485798}
   - 114: {fileID: 1365485800}
+  - 114: {fileID: 1365485801}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5225,6 +5226,7 @@ MonoBehaviour:
   LevelText: {fileID: 0}
   Coin: {fileID: 0}
   TimeBoost: {fileID: 0}
+  WorldGenerator: {fileID: 0}
 --- !u!114 &1365485800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5236,6 +5238,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee814cf5c480c4af4a436b908a7da100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1365485801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1365485792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed42c3d49b30a4a8aba596e2e149b976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentMode: 1
+  Goal: {fileID: 0}
+  AllWayRoom: {fileID: 100008, guid: db67c88525f8a442985592dbfdb1d4ce, type: 2}
+  AllExceptSouthRoom: {fileID: 100000, guid: d68e7429093844d33b62e4f76fd9c299, type: 2}
+  AllExceptNorthRoom: {fileID: 100008, guid: 78f97535cbefe495da883aa1f5aebba0, type: 2}
+  AllExceptWestRoom: {fileID: 100008, guid: 440fcd223924346188e961d33585d774, type: 2}
+  AllExceptEastRoom: {fileID: 100000, guid: 6178ef46d99624734b70e9d9148366d2, type: 2}
 --- !u!1 &1425353796
 GameObject:
   m_ObjectHideFlags: 0

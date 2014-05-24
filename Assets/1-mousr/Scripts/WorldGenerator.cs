@@ -11,15 +11,32 @@ public class WorldGenerator : MonoBehaviour {
 	/// Random - Mimics Prim's Algorithm
 	/// </summary>
 	public enum Mode {Newest = 1, Random};
-	public static Mode CurrentMode = Mode.Newest;
-	public static GameObject Goal = null;
+	public Mode CurrentMode = Mode.Newest;
+	public GameObject GoalPrefab;
+	public GameObject Goal = null;
 
-	private static Point2D MaxPoint;
-	private static Point2D MinPoint;
+	private Point2D MaxPoint;
+	private Point2D MinPoint;
 
-	private static int[,] Grid = null;
-	private static IList<Point2D> Cells = new List<Point2D> ();
-	private static IList<GameObject> MazeObjects = new List<GameObject>();
+	private int[,] Grid = null;
+	private IList<Point2D> Cells = new List<Point2D> ();
+	private IList<GameObject> MazeObjects = new List<GameObject>();
+
+	public GameObject AllWayRoom;
+	public GameObject AllExceptSouthRoom;
+	public GameObject AllExceptNorthRoom;
+	public GameObject AllExceptWestRoom;
+	public GameObject AllExceptEastRoom;
+	public GameObject NorthAndEastRoom;
+	public GameObject NorthAndWestRoom;
+	public GameObject SouthAndEastRoom;
+	public GameObject SouthAndWestRoom;
+	public GameObject NorthSouthCorridor;
+	public GameObject WestEastCorridor;
+	public GameObject SouthDeadEnd;
+	public GameObject NorthDeadEnd;
+	public GameObject WestDeadEnd;
+	public GameObject EastDeadEnd;
 
 	/// <summary>
 	/// Creates and initializes a [width] by [height] array which will be used to
@@ -27,7 +44,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <param name="width">Width.</param>
 	/// <param name="height">Height.</param>
-	private static void InitializeGrid(int width, int height) {
+	private void InitializeGrid(int width, int height) {
 		Grid = new int[width,height];
 
 		for (int x = 0; x < width; ++x) {
@@ -42,14 +59,14 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The next index.</returns>
 	/// <param name="max">current length of the Cell list.</param>
-	private static int GetNextIndex(int max) {
+	private int GetNextIndex(int max) {
 		return  CurrentMode == Mode.Newest ? max - 1 : MazeRandom.Next(max);
 	}
 
 	/// <summary>
 	/// Perfoms a single iteration on the maze creation algorithm.
 	/// </summary>
-	private static void Iterate() {
+	private void Iterate() {
 		// get the index for the next cell
 		var index = GetNextIndex(Cells.Count);
 		var cell = Cells[index];
@@ -88,7 +105,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// algorithm. The default mode for this algorithm is Newest which mimics the behavior
 	/// of the Recursive Backtracking algorithm.
 	/// </summary>
-	private static void GenerateGrid() {
+	private void GenerateGrid() {
 		while (Cells.Count > 0) {
 			Iterate ();
 		}
@@ -99,57 +116,58 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The new game object.</returns>
 	/// <param name="exitDefinition">Integer describing all possible exits from a cell.</param>
-	private static GameObject CreateGameObjectFromExitDefinition(int exitDefinition) {
+	private GameObject CreateGameObjectFromExitDefinition(int exitDefinition) {
+
 		switch (exitDefinition) {
 
 		// all ways out
 		case Direction.NorthSouthWestEast:
-			return Instantiate (GameObject.Find ("allWayRoom")) as GameObject;
+			return Instantiate (AllWayRoom) as GameObject;
 
 		//3 ways out
 		case Direction.NorthWestEast:
-			return Instantiate (GameObject.Find ("allExceptSouthRoom")) as GameObject;
+			return Instantiate (AllExceptSouthRoom) as GameObject;
 	
 		case Direction.NorthSouthWest:
-			return Instantiate (GameObject.Find ("allExceptEastRoom")) as GameObject;
+			return Instantiate (AllExceptEastRoom) as GameObject;
 	
 		case Direction.SouthWestEast:
-			return Instantiate (GameObject.Find ("allExceptNorthRoom")) as GameObject;
+			return Instantiate (AllExceptNorthRoom) as GameObject;
 	
 		case Direction.NorthSouthEast:
-			return Instantiate (GameObject.Find ("allExceptWestRoom")) as GameObject;
+			return Instantiate (AllExceptWestRoom) as GameObject;
 
 		//2 ways out
 		case Direction.NorthEast:
-			return Instantiate (GameObject.Find ("northAndEastRoom")) as GameObject;
+			return Instantiate (NorthAndEastRoom) as GameObject;
 	
 		case Direction.NorthWest:
-			return Instantiate (GameObject.Find ("northAndWestRoom")) as GameObject;
+			return Instantiate (NorthAndWestRoom) as GameObject;
 	
 		case Direction.SouthEast:
-			return Instantiate (GameObject.Find ("southAndEastRoom")) as GameObject;
+			return Instantiate (SouthAndEastRoom) as GameObject;
 	
 		case Direction.SouthWest:
-			return Instantiate (GameObject.Find ("southAndWestRoom")) as GameObject;
+			return Instantiate (SouthAndWestRoom) as GameObject;
 	
 		case Direction.NorthSouth:
-			return Instantiate (GameObject.Find ("northSouthCorridor")) as GameObject;
+			return Instantiate (NorthSouthCorridor) as GameObject;
 
 		case Direction.WestEast:
-			return Instantiate (GameObject.Find ("westEastCorridor")) as GameObject;
+			return Instantiate (WestEastCorridor) as GameObject;
 
 		//1 way out
 		case Direction.North:
-			return Instantiate (GameObject.Find ("southDeadEnd")) as GameObject;
+			return Instantiate (SouthDeadEnd) as GameObject;
 
 		case Direction.South:
-			return Instantiate (GameObject.Find ("northDeadEnd")) as GameObject;
+			return Instantiate (NorthDeadEnd) as GameObject;
 
 		case Direction.East:
-			return Instantiate (GameObject.Find ("westDeadEnd")) as GameObject;
+			return Instantiate (WestDeadEnd) as GameObject;
 
 		case Direction.West:
-			return Instantiate (GameObject.Find ("eastDeadEnd")) as GameObject;
+			return Instantiate (EastDeadEnd) as GameObject;
 
 		default:
 			throw new UnityException ("Unknown Direction in Grid: " + exitDefinition);
@@ -159,7 +177,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// <summary>
 	/// Iterates the Grid and creates game objects from the exit data for each cell.
 	/// </summary>
-	private static void CreateGameObjects() {
+	private void CreateGameObjects() {
 		for (var x = 0; x < MaxPoint.X; ++x) {
 			for (var y = 0; y < MaxPoint.Y; ++y) {
 				var obj = CreateGameObjectFromExitDefinition(Grid[x,y]);
@@ -172,7 +190,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// <summary>
 	/// Destroy existing maze objects and clears the maze object array.
 	/// </summary>
-	private static void ClearMazeObjects() {
+	private void ClearMazeObjects() {
 		Destroy (Goal);
 		foreach (var obj in MazeObjects) {
 			Destroy (obj);
@@ -181,32 +199,55 @@ public class WorldGenerator : MonoBehaviour {
 		MazeObjects.Clear ();
 	}
 
-	public static IEnumerable<GameObject> GetDeadEnds() {
+	/// <summary>
+	/// Gets the dead ends.
+	/// </summary>
+	/// <returns>The dead ends.</returns>
+	public IEnumerable<GameObject> GetDeadEnds() {
 		return MazeObjects.Where (o => o.name.Contains ("DeadEnd"));
 	}
-	
-	public static IEnumerable<GameObject> GetHallways() {
+
+	/// <summary>
+	/// Gets the hallways.
+	/// </summary>
+	/// <returns>The hallways.</returns>
+	public IEnumerable<GameObject> GetHallways() {
 		return MazeObjects.Where (o => o.name.EndsWith ("Corridor"));
 	}
-	
-	public static IEnumerable<GameObject> GetThreeExitRooms() {
+
+	/// <summary>
+	/// Gets the three exit rooms.
+	/// </summary>
+	/// <returns>The three exit rooms.</returns>
+	public IEnumerable<GameObject> GetThreeExitRooms() {
 		return MazeObjects.Where (o => o.name.StartsWith ("allExcept"));
 	}
-	
-	public static IEnumerable<GameObject> GetCornerRooms() {
+
+	/// <summary>
+	/// Gets the corner rooms.
+	/// </summary>
+	/// <returns>The corner rooms.</returns>
+	public IEnumerable<GameObject> GetCornerRooms() {
 		return MazeObjects.Where (o => o.name.Contains ("And"));
 	}
-	
-	public static IEnumerable<GameObject> GetFourExitRooms() {
+
+	/// <summary>
+	/// Gets the four exit rooms.
+	/// </summary>
+	/// <returns>The four exit rooms.</returns>
+	public IEnumerable<GameObject> GetFourExitRooms() {
 		return MazeObjects.Where (o => o.name.Equals ("allWayRoom"));
 	}
 
-	private static void ChooseGoalRoom() {
+	/// <summary>
+	/// Chooses the goal room.
+	/// </summary>
+	private void ChooseGoalRoom() {
 		var deadEnds = GetDeadEnds()
 			.OrderByDescending (o => o.transform.position.magnitude)
 			.Take (3);
 		var goalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
-		Goal = Instantiate (GameObject.FindGameObjectWithTag ("Goal"), goalRoom.transform.position, Quaternion.identity) as GameObject;
+		Goal = Instantiate (GoalPrefab, goalRoom.transform.position, Quaternion.identity) as GameObject;
 	}
 
 	/// <summary>
@@ -215,7 +256,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// <param name="width">Width of maze in room count.</param>
 	/// <param name="height">Height of maze in room count.</param>
 	/// <param name="mode">Cell selection mode. See Mode documentation above.</param>
-	public static void GenerateWorld(int width = 5, int height = 5, Mode mode = Mode.Newest) {
+	public void GenerateWorld(int width = 5, int height = 5, Mode mode = Mode.Newest) {
 		MaxPoint = new Point2D (width, height);
 		MinPoint = new Point2D (); // (0,0)
 
