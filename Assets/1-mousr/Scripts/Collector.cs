@@ -41,9 +41,5 @@ public class Collector : MonoBehaviour {
 		Destroy (coin);
 		ScoreManager.AddCoinScore ();
 	}
-
-	// Update is called once per frame
-	void Update () {
 	
-	}
 }

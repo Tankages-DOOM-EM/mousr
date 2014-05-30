@@ -369,6 +369,7 @@ GameObject:
   - 114: {fileID: 1365485798}
   - 114: {fileID: 1365485800}
   - 114: {fileID: 1365485801}
+  - 114: {fileID: 1365485802}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -481,7 +482,6 @@ MonoBehaviour:
   LevelText: {fileID: 2119844344}
   Coin: {fileID: 100000, guid: e08c314dcc23847adb9bdf5f2ff58bab, type: 2}
   TimeBoost: {fileID: 100000, guid: cfd060c34d7154402ad1c7f90e86e4eb, type: 2}
-  WorldGenerator: {fileID: 0}
 --- !u!114 &1365485800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,6 +522,21 @@ MonoBehaviour:
   NorthDeadEnd: {fileID: 100006, guid: 188d1e711842e47709250ec3ba89e744, type: 2}
   WestDeadEnd: {fileID: 100004, guid: b86900d9ba86843b2bbf91e8be6e54e1, type: 2}
   EastDeadEnd: {fileID: 100002, guid: ab2d9b30613634d3983d70801eb4ccfa, type: 2}
+--- !u!114 &1365485802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1365485792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aadfbe5a338b46249d4da7f18e25093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WorldGenerator: {fileID: 0}
+  CoinPrefab: {fileID: 100000, guid: e08c314dcc23847adb9bdf5f2ff58bab, type: 2}
+  TimeBoostPrefab: {fileID: 100000, guid: cfd060c34d7154402ad1c7f90e86e4eb, type: 2}
+  CollectableSize: .5
 --- !u!1 &1572713978
 GameObject:
   m_ObjectHideFlags: 0

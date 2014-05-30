@@ -18,7 +18,7 @@ public class WorldGenerator : MonoBehaviour {
 	private Point2D MaxPoint;
 	private Point2D MinPoint;
 
-	private int[,] Grid = null;
+	public int[,] Grid = null;
 	private IList<Point2D> Cells = new List<Point2D> ();
 	private IList<GameObject> MazeObjects = new List<GameObject>();
 
@@ -174,13 +174,22 @@ public class WorldGenerator : MonoBehaviour {
 		}
 	}
 
+	public int GetRoom (int x, int y)
+	{
+		return Grid [x, y];
+	}
+
+	public void SetRoom(int x, int y, int newRoomDescription) {
+		Grid [x, y] = newRoomDescription;
+	}
+
 	/// <summary>
 	/// Iterates the Grid and creates game objects from the exit data for each cell.
 	/// </summary>
 	private void CreateGameObjects() {
 		for (var x = 0; x < MaxPoint.X; ++x) {
 			for (var y = 0; y < MaxPoint.Y; ++y) {
-				var obj = CreateGameObjectFromExitDefinition(Grid[x,y]);
+				var obj = CreateGameObjectFromExitDefinition (GetRoom (x, y));
 				obj.transform.position = Convert.UnitToWorld (x, y);
 				MazeObjects.Add(obj);
 			}

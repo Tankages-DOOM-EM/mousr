@@ -10,11 +10,13 @@ public class LevelManager : MonoBehaviour
 	public GameObject Coin;
 	public GameObject TimeBoost;
 	public IList<GameObject> WorldCoins = new List<GameObject>();
-	public WorldGenerator WorldGenerator;
+	private WorldGenerator WorldGenerator;
+	private CollectableManager CollectableManager;
 
 	void Start() {
 		LevelText = GameObject.Find ("LevelText");
-		WorldGenerator = GameObject.Find ("Player").GetComponent<WorldGenerator> ();
+		WorldGenerator = gameObject.GetComponent<WorldGenerator> ();
+		CollectableManager = gameObject.GetComponent<CollectableManager> ();
 	}
 
 	public void LoadNextLevel() {
@@ -57,7 +59,7 @@ public class LevelManager : MonoBehaviour
 				x = MazeRandom.Next (0, width);
 				y = MazeRandom.Next(0, height);
 			}
-			WorldCoins.Add (Instantiate(Coin, Convert.UnitToWorld(x,y), Quaternion.identity) as GameObject);
+			WorldCoins.Add (CollectableManager.SpawnCollectable(x,y,CollectableConstants.CoinId));
 		}
 
 	}
@@ -71,8 +73,7 @@ public class LevelManager : MonoBehaviour
 				x = MazeRandom.Next (0, width);
 				y = MazeRandom.Next(0, height);
 			}
-			Debug.Log (string.Format ("Create Boost at: ({0}, {1})", x, y));
-			WorldCoins.Add (Instantiate(TimeBoost, Convert.UnitToWorld(x,y), Quaternion.identity) as GameObject);
+			WorldCoins.Add (CollectableManager.SpawnCollectable(x,y,CollectableConstants.TimeBoostId));
 		}
 	}
 }
