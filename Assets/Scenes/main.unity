@@ -480,8 +480,6 @@ MonoBehaviour:
   CurrentLevel: 0
   WorldSize: 8
   LevelText: {fileID: 2119844344}
-  Coin: {fileID: 100000, guid: e08c314dcc23847adb9bdf5f2ff58bab, type: 2}
-  TimeBoost: {fileID: 100000, guid: cfd060c34d7154402ad1c7f90e86e4eb, type: 2}
 --- !u!114 &1365485800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,6 +520,7 @@ MonoBehaviour:
   NorthDeadEnd: {fileID: 100006, guid: 188d1e711842e47709250ec3ba89e744, type: 2}
   WestDeadEnd: {fileID: 100004, guid: b86900d9ba86843b2bbf91e8be6e54e1, type: 2}
   EastDeadEnd: {fileID: 100002, guid: ab2d9b30613634d3983d70801eb4ccfa, type: 2}
+  CollectableManager: {fileID: 0}
 --- !u!114 &1365485802
 MonoBehaviour:
   m_ObjectHideFlags: 0

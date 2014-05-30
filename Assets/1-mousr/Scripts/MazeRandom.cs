@@ -21,6 +21,11 @@ public class MazeRandom
 		CheckSeeded ();
 		return rand.Next(min, max);
 	}
+
+	public static Point2D Next(Point2D max) {
+		CheckSeeded ();
+		return new Point2D (rand.Next (max.X), rand.Next (max.Y));
+	}
 }
 
 

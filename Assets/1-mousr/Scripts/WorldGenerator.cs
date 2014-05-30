@@ -38,6 +38,12 @@ public class WorldGenerator : MonoBehaviour {
 	public GameObject WestDeadEnd;
 	public GameObject EastDeadEnd;
 
+	public CollectableManager CollectableManager;
+
+	void Start() {
+		CollectableManager = gameObject.GetComponent<CollectableManager> ();
+	}
+
 	/// <summary>
 	/// Creates and initializes a [width] by [height] array which will be used to
 	/// create the 
@@ -106,6 +112,12 @@ public class WorldGenerator : MonoBehaviour {
 	/// of the Recursive Backtracking algorithm.
 	/// </summary>
 	private void GenerateGrid() {
+
+		Cells.Clear ();
+
+		//seed algorithm
+		Cells.Add (MazeRandom.Next (MaxPoint));
+
 		while (Cells.Count > 0) {
 			Iterate ();
 		}
@@ -186,7 +198,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// <summary>
 	/// Iterates the Grid and creates game objects from the exit data for each cell.
 	/// </summary>
-	private void CreateGameObjects() {
+	private void CreateRoomGameObjects() {
 		for (var x = 0; x < MaxPoint.X; ++x) {
 			for (var y = 0; y < MaxPoint.Y; ++y) {
 				var obj = CreateGameObjectFromExitDefinition (GetRoom (x, y));
@@ -251,7 +263,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// <summary>
 	/// Chooses the goal room.
 	/// </summary>
-	private void ChooseGoalRoom() {
+	private void CreateGoal() {
 		var deadEnds = GetDeadEnds()
 			.OrderByDescending (o => o.transform.position.magnitude)
 			.Take (3);
@@ -259,30 +271,58 @@ public class WorldGenerator : MonoBehaviour {
 		Goal = Instantiate (GoalPrefab, goalRoom.transform.position, Quaternion.identity) as GameObject;
 	}
 
+	private void SpawnCollectables(int count, int type) {
+		var goalPos = Convert.WorldToUnit (Goal.transform.position);
+		for (var i = 0; i < count; ++i) {
+			var pos = MazeRandom.Next (MaxPoint);
+			while(pos == goalPos) {
+				pos = MazeRandom.Next (MaxPoint);
+			}
+			MazeObjects.Add (CollectableManager.SpawnCollectable(pos,type));
+		}
+	}
+
+	private void CreateCoins(int count) {
+		SpawnCollectables(count,CollectableConstants.CoinId);
+	}
+
+	private void CreateTimeBoosts(int count) {
+		SpawnCollectables(count,CollectableConstants.TimeBoostId);
+	}
+
 	/// <summary>
 	/// Generates the Maze. Public entry point for the maze generation.
 	/// </summary>
 	/// <param name="width">Width of maze in room count.</param>
 	/// <param name="height">Height of maze in room count.</param>
-	/// <param name="mode">Cell selection mode. See Mode documentation above.</param>
-	public void GenerateWorld(int width = 5, int height = 5, Mode mode = Mode.Newest) {
-		MaxPoint = new Point2D (width, height);
-		MinPoint = new Point2D (); // (0,0)
-
-		CurrentMode = mode;
-
-		InitializeGrid (width, height);
-
-		ClearMazeObjects ();
-
-		Cells.Clear ();
-
-		Cells.Add (new Point2D (MazeRandom.Next (width), MazeRandom.Next (height)));
-
-		GenerateGrid ();
-
-		CreateGameObjects ();
-
-		ChooseGoalRoom ();
+	public void GenerateWorld(int width = 5, int height = 5) {
+		GenerateWorld (new WorldConfig {
+			Width = width,
+			Height = height, 
+			CoinCount = 10,
+			TimeBoostCount = 2
+		});
 	}
+
+	public void GenerateWorld(WorldConfig config) {
+		MaxPoint = new Point2D (config.Width, config.Height);
+		MinPoint = new Point2D (); // (0,0)
+		
+		CurrentMode = Mode.Newest;
+		
+		InitializeGrid (config.Width, config.Height);
+		
+		ClearMazeObjects ();
+		
+		GenerateGrid ();
+		
+		CreateRoomGameObjects ();
+		
+		CreateGoal ();
+		
+		CreateCoins (config.CoinCount);
+		
+		CreateTimeBoosts (config.TimeBoostCount);
+	}
+
 }

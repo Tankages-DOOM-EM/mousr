@@ -42,5 +42,9 @@ public class CollectableManager : MonoBehaviour
 			? CreateCoin (x, y, room)
 			: CreateTimeBoost (x, y, room);
 	}
+
+	public GameObject SpawnCollectable(Point2D pos, int type) {
+		return SpawnCollectable(pos.X, pos.Y, type);
+	}
 }
 
