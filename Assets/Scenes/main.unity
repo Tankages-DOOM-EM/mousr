@@ -505,21 +505,12 @@ MonoBehaviour:
   CurrentMode: 1
   GoalPrefab: {fileID: 100000, guid: 556d9611ad1a04e62866ce3aec918da5, type: 2}
   Goal: {fileID: 0}
-  AllWayRoom: {fileID: 100008, guid: db67c88525f8a442985592dbfdb1d4ce, type: 2}
-  AllExceptSouthRoom: {fileID: 100000, guid: d68e7429093844d33b62e4f76fd9c299, type: 2}
-  AllExceptNorthRoom: {fileID: 100008, guid: 78f97535cbefe495da883aa1f5aebba0, type: 2}
-  AllExceptWestRoom: {fileID: 100008, guid: 440fcd223924346188e961d33585d774, type: 2}
-  AllExceptEastRoom: {fileID: 100000, guid: 6178ef46d99624734b70e9d9148366d2, type: 2}
-  NorthAndEastRoom: {fileID: 100006, guid: 4dd3ebd3e0f73464eb00c2c1cbaea23f, type: 2}
-  NorthAndWestRoom: {fileID: 100002, guid: dffcb8775f77e49c1b90450c505dccf8, type: 2}
-  SouthAndEastRoom: {fileID: 100008, guid: d6ec40df33b0f45b68ca5260d9f11e5a, type: 2}
-  SouthAndWestRoom: {fileID: 100000, guid: a834be4d451064a1c86c555080645d4a, type: 2}
-  NorthSouthCorridor: {fileID: 100000, guid: 08ba518b3112f422b89b8a828046339c, type: 2}
-  WestEastCorridor: {fileID: 100004, guid: 9b7123efbdf734a22925aad6bb53272c, type: 2}
-  SouthDeadEnd: {fileID: 100000, guid: fdf426b6339d04fb5adc8e3275de190d, type: 2}
-  NorthDeadEnd: {fileID: 100006, guid: 188d1e711842e47709250ec3ba89e744, type: 2}
-  WestDeadEnd: {fileID: 100004, guid: b86900d9ba86843b2bbf91e8be6e54e1, type: 2}
-  EastDeadEnd: {fileID: 100002, guid: ab2d9b30613634d3983d70801eb4ccfa, type: 2}
+  RotationAxis: {x: 0, y: 0, z: -1}
+  DeadEndPrefab: {fileID: 100006, guid: 188d1e711842e47709250ec3ba89e744, type: 2}
+  HallwayPrefab: {fileID: 100000, guid: 08ba518b3112f422b89b8a828046339c, type: 2}
+  CornerPrefab: {fileID: 100006, guid: 4dd3ebd3e0f73464eb00c2c1cbaea23f, type: 2}
+  ThreeWayPrefab: {fileID: 100000, guid: d68e7429093844d33b62e4f76fd9c299, type: 2}
+  AllWayPrefab: {fileID: 100008, guid: db67c88525f8a442985592dbfdb1d4ce, type: 2}
   CollectableManager: {fileID: 0}
 --- !u!114 &1365485802
 MonoBehaviour:

@@ -20,31 +20,26 @@ public class CollectableManager : MonoBehaviour
 		var xOffset = (numObjects % 2) * CollectableSize;
 		var yOffset = Mathf.Floor (numObjects / 2.0f) * CollectableSize;
 
-		return Convert.UnitToWorld(x, y) + new Vector3 (xOffset, yOffset);
+		return new Vector3 (xOffset, yOffset);// + Convert.UnitToWorld(x, y);
 	}
 
-	private GameObject CreateCoin(int x, int y, int room) {
-		WorldGenerator.SetRoom (x, y, room | CollectableConstants.CoinId);
-		var position = GetNextPosition (x, y, room.RoomItemCount ());
-		return Instantiate (CoinPrefab, position, Quaternion.identity) as GameObject;
+	private GameObject CreateCoin() {
+		return Instantiate (CoinPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 	}
 
-	private GameObject CreateTimeBoost(int x, int y, int room) {
-		WorldGenerator.SetRoom (x, y, room | CollectableConstants.TimeBoostId);
-		var position = GetNextPosition (x, y, room.RoomItemCount ());
-		return Instantiate (TimeBoostPrefab, position, Quaternion.identity) as GameObject;
+	private GameObject CreateTimeBoost() {
+		return Instantiate (TimeBoostPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 	}
 
-	public GameObject SpawnCollectable(int x, int y, int type) {
-		var room = WorldGenerator.GetRoom (x, y);
-
-		return (type == CollectableConstants.CoinId) 
-			? CreateCoin (x, y, room)
-			: CreateTimeBoost (x, y, room);
-	}
-
-	public GameObject SpawnCollectable(Point2D pos, int type) {
-		return SpawnCollectable(pos.X, pos.Y, type);
+	public ICollectable SpawnCollectable(int type) {																				
+		switch (type) {
+		case CollectableConstants.CoinId:
+			return new Collectable (type, CreateCoin ());
+		case CollectableConstants.TimeBoostId:
+			return new Collectable (type, CreateTimeBoost());
+		default:
+			return null;
+		}
 	}
 }
 

@@ -47,21 +47,28 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\1-mousr\Scripts\CameraFollow.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\Collectable.cs" />
      <Compile Include="Assets\1-mousr\Scripts\CollectableConstants.cs" />
      <Compile Include="Assets\1-mousr\Scripts\CollectableManager.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Collector.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Convert.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\DescriptionMasks.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Direction.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\ICollectable.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\IMazeObject.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\IRoom.cs" />
      <Compile Include="Assets\1-mousr\Scripts\LevelManager.cs" />
      <Compile Include="Assets\1-mousr\Scripts\MazeRandom.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Point2D.cs" />
-     <Compile Include="Assets\1-mousr\Scripts\RoomDescriptionExtensions.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\Room.cs" />
      <Compile Include="Assets\1-mousr\Scripts\ScoreManager.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Timer.cs" />
      <Compile Include="Assets\1-mousr\Scripts\TopDownPlayerController.cs" />
      <Compile Include="Assets\1-mousr\Scripts\UpdateScoreText.cs" />
      <Compile Include="Assets\1-mousr\Scripts\WorldConfig.cs" />
      <Compile Include="Assets\1-mousr\Scripts\WorldGenerator.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\extensions\IntExtensions.cs" />
+     <Compile Include="Assets\1-mousr\Scripts\extensions\RoomDescriptionExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

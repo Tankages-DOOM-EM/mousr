@@ -14,34 +14,66 @@ public class WorldGenerator : MonoBehaviour {
 	public Mode CurrentMode = Mode.Newest;
 	public GameObject GoalPrefab;
 	public GameObject Goal = null;
+	public Point2D GoalPos;
+	public Vector3 RotationAxis = new Vector3 (0, 0, -1);
 
 	private Point2D MaxPoint;
 	private Point2D MinPoint;
 
 	public int[,] Grid = null;
 	private IList<Point2D> Cells = new List<Point2D> ();
-	private IList<GameObject> MazeObjects = new List<GameObject>();
+	private IDictionary<int,IRoom> Rooms = new Dictionary<int,IRoom>();
 
-	public GameObject AllWayRoom;
-	public GameObject AllExceptSouthRoom;
-	public GameObject AllExceptNorthRoom;
-	public GameObject AllExceptWestRoom;
-	public GameObject AllExceptEastRoom;
-	public GameObject NorthAndEastRoom;
-	public GameObject NorthAndWestRoom;
-	public GameObject SouthAndEastRoom;
-	public GameObject SouthAndWestRoom;
-	public GameObject NorthSouthCorridor;
-	public GameObject WestEastCorridor;
-	public GameObject SouthDeadEnd;
-	public GameObject NorthDeadEnd;
-	public GameObject WestDeadEnd;
-	public GameObject EastDeadEnd;
+	// prototypes:
+	
+	// dead end
+	//
+	// +  +
+	// |  |
+	// +--+
+	public GameObject DeadEndPrefab;
+	
+	// hallway
+	//
+	// +  +
+	// |  |
+	// +  +
+	public GameObject HallwayPrefab;
+	
+	// corner
+	//
+	// +  +
+	// |
+	// +--+
+	public GameObject CornerPrefab;
+	
+	// three way
+	//
+	// +  +
+	// 
+	// +--+
+	public GameObject ThreeWayPrefab;
+	
+	// all way
+	//
+	// +  +
+	//
+	// +  +
+	public GameObject AllWayPrefab;
 
 	public CollectableManager CollectableManager;
 
 	void Start() {
 		CollectableManager = gameObject.GetComponent<CollectableManager> ();
+		if (Direction.SouthEast.HasExit (Direction.North)) {
+			Debug.LogError("South East should not have North!");
+		}
+		if (Direction.SouthEast.HasExit (Direction.NorthSouth)) {
+			Debug.LogError("South East should not have NorthSouth!");
+		}
+		if (Direction.SouthEast.HasExit (Direction.WestEast)) {
+			Debug.LogError("South East should not have WestEast!");
+		}
 	}
 
 	/// <summary>
@@ -129,64 +161,33 @@ public class WorldGenerator : MonoBehaviour {
 	/// <returns>The new game object.</returns>
 	/// <param name="exitDefinition">Integer describing all possible exits from a cell.</param>
 	private GameObject CreateGameObjectFromExitDefinition(int exitDefinition) {
+		var exitCount = (exitDefinition & DescriptionMasks.Direction).SumBits32 ();
 
-		switch (exitDefinition) {
+		switch (exitCount) {
+		case 1:
+			return Instantiate(DeadEndPrefab) as GameObject;
 
-		// all ways out
-		case Direction.NorthSouthWestEast:
-			return Instantiate (AllWayRoom) as GameObject;
+		case 2:
+			Debug.Log (string.Format ("exits: {0}{1}{2}{3}", exitDefinition.HasExit(Direction.North)?"N": "-", exitDefinition.HasExit(Direction.East)?"E": "-", exitDefinition.HasExit(Direction.South)?"S": "-", exitDefinition.HasExit(Direction.West)?"W": "-"));
+			if(exitDefinition.HasExit(Direction.NorthSouth) || exitDefinition.HasExit (Direction.WestEast)) {
+				Debug.Log ("hallway");
+				return Instantiate(HallwayPrefab) as GameObject;
+			}
+			Debug.Log ("Corner");
+			return Instantiate(CornerPrefab) as GameObject;
 
-		//3 ways out
-		case Direction.NorthWestEast:
-			return Instantiate (AllExceptSouthRoom) as GameObject;
-	
-		case Direction.NorthSouthWest:
-			return Instantiate (AllExceptEastRoom) as GameObject;
-	
-		case Direction.SouthWestEast:
-			return Instantiate (AllExceptNorthRoom) as GameObject;
-	
-		case Direction.NorthSouthEast:
-			return Instantiate (AllExceptWestRoom) as GameObject;
+		case 3:
+			return Instantiate(ThreeWayPrefab) as GameObject;
 
-		//2 ways out
-		case Direction.NorthEast:
-			return Instantiate (NorthAndEastRoom) as GameObject;
-	
-		case Direction.NorthWest:
-			return Instantiate (NorthAndWestRoom) as GameObject;
-	
-		case Direction.SouthEast:
-			return Instantiate (SouthAndEastRoom) as GameObject;
-	
-		case Direction.SouthWest:
-			return Instantiate (SouthAndWestRoom) as GameObject;
-	
-		case Direction.NorthSouth:
-			return Instantiate (NorthSouthCorridor) as GameObject;
-
-		case Direction.WestEast:
-			return Instantiate (WestEastCorridor) as GameObject;
-
-		//1 way out
-		case Direction.North:
-			return Instantiate (SouthDeadEnd) as GameObject;
-
-		case Direction.South:
-			return Instantiate (NorthDeadEnd) as GameObject;
-
-		case Direction.East:
-			return Instantiate (WestDeadEnd) as GameObject;
-
-		case Direction.West:
-			return Instantiate (EastDeadEnd) as GameObject;
+		case 4:
+			return Instantiate(AllWayPrefab) as GameObject;
 
 		default:
 			throw new UnityException ("Unknown Direction in Grid: " + exitDefinition);
 		}
 	}
 
-	public int GetRoom (int x, int y)
+	public int GetRoomDescription (int x, int y)
 	{
 		return Grid [x, y];
 	}
@@ -195,15 +196,90 @@ public class WorldGenerator : MonoBehaviour {
 		Grid [x, y] = newRoomDescription;
 	}
 
+	private Quaternion GetOneExitOrientation(int directions) {
+
+		if (directions.HasExit(Direction.South)) {
+			return Quaternion.identity;
+		}
+		if (directions.HasExit(Direction.West)) {
+			return Quaternion.AngleAxis(90, RotationAxis);
+		}
+		if (directions.HasExit(Direction.North)) {
+			return Quaternion.AngleAxis(180, RotationAxis);
+		}
+		
+		return Quaternion.AngleAxis(270, RotationAxis);
+	}
+	
+	private Quaternion GetTwoExitOrientation(int directions) {
+
+		// hallways
+		if (directions.HasExit (Direction.NorthSouth)) {
+			return Quaternion.identity;
+		} else if (directions.HasExit (Direction.WestEast)) {
+			return Quaternion.AngleAxis (90, RotationAxis);
+		}
+
+		// corners
+		if (directions.HasExit (Direction.NorthEast)) {
+			return Quaternion.identity;
+		} else if (directions.HasExit (Direction.SouthEast)) {
+			return Quaternion.AngleAxis (90, RotationAxis);
+		} else if (directions.HasExit (Direction.SouthWest)) {
+			return Quaternion.AngleAxis (180, RotationAxis);
+		} else { //Direction.NorthWest
+			return Quaternion.AngleAxis (270, RotationAxis);
+		}
+	}
+	
+	private Quaternion GetThreeExitOrientation(int directions) {
+
+		if (!directions.HasExit(Direction.South)) {
+			return Quaternion.identity;
+		}
+		if (!directions.HasExit(Direction.West)) {
+			return Quaternion.AngleAxis(90, RotationAxis);
+		}
+		if (!directions.HasExit (Direction.North)) {
+			return Quaternion.AngleAxis(180, RotationAxis);
+		}
+		
+		return Quaternion.AngleAxis(270, RotationAxis);
+	}
+
+	private Quaternion RotationFromDirection(int roomDescription) {
+		int directions = roomDescription & DescriptionMasks.Direction;
+		var rotation = Quaternion.identity;
+
+		switch (directions.SumBits32 ()) {
+		case 1:
+			rotation = GetOneExitOrientation (directions);
+			break;
+		case 2:
+			rotation = GetTwoExitOrientation (directions);
+			break;
+		case 3:
+			rotation = GetThreeExitOrientation (directions);
+			break;
+		}
+		//Debug.Log (string.Format ("exits: {0}{1}{2}{3}", directions.HasExit(Direction.North)?"N": "-", directions.HasExit(Direction.East)?"E": "-", directions.HasExit(Direction.South)?"S": "-", directions.HasExit(Direction.West)?"W": "-"));
+		//Debug.Log(string.Format("angle: {0}", rotation.eulerAngles.z));
+		return rotation;
+	}
+
 	/// <summary>
 	/// Iterates the Grid and creates game objects from the exit data for each cell.
 	/// </summary>
 	private void CreateRoomGameObjects() {
 		for (var x = 0; x < MaxPoint.X; ++x) {
 			for (var y = 0; y < MaxPoint.Y; ++y) {
-				var obj = CreateGameObjectFromExitDefinition (GetRoom (x, y));
+				var roomDescription = GetRoomDescription (x, y);
+				var obj = CreateGameObjectFromExitDefinition (roomDescription);
+				roomDescription |= RoomId (x,y);
+				var room = new Room(obj, x, y, roomDescription);
 				obj.transform.position = Convert.UnitToWorld (x, y);
-				MazeObjects.Add(obj);
+				obj.transform.rotation = RotationFromDirection(roomDescription);
+				AddRoom(x,y,room);
 			}
 		}
 	}
@@ -213,51 +289,49 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	private void ClearMazeObjects() {
 		Destroy (Goal);
-		foreach (var obj in MazeObjects) {
-			Destroy (obj);
-		}
+		Rooms.Select(p => p.Value).ToList ().ForEach(r => r.Destroy ());
 		
-		MazeObjects.Clear ();
+		Rooms.Clear ();
 	}
 
 	/// <summary>
 	/// Gets the dead ends.
 	/// </summary>
 	/// <returns>The dead ends.</returns>
-	public IEnumerable<GameObject> GetDeadEnds() {
-		return MazeObjects.Where (o => o.name.Contains ("DeadEnd"));
+	public IEnumerable<IRoom> GetDeadEnds() {
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Contains ("DeadEnd"));
 	}
 
 	/// <summary>
 	/// Gets the hallways.
 	/// </summary>
 	/// <returns>The hallways.</returns>
-	public IEnumerable<GameObject> GetHallways() {
-		return MazeObjects.Where (o => o.name.EndsWith ("Corridor"));
+	public IEnumerable<IRoom> GetHallways() {
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.EndsWith ("Corridor"));
 	}
 
 	/// <summary>
 	/// Gets the three exit rooms.
 	/// </summary>
 	/// <returns>The three exit rooms.</returns>
-	public IEnumerable<GameObject> GetThreeExitRooms() {
-		return MazeObjects.Where (o => o.name.StartsWith ("allExcept"));
+	public IEnumerable<IRoom> GetThreeExitRooms() {
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.StartsWith ("allExcept"));
 	}
 
 	/// <summary>
 	/// Gets the corner rooms.
 	/// </summary>
 	/// <returns>The corner rooms.</returns>
-	public IEnumerable<GameObject> GetCornerRooms() {
-		return MazeObjects.Where (o => o.name.Contains ("And"));
+	public IEnumerable<IRoom> GetCornerRooms() {
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Contains ("And"));
 	}
 
 	/// <summary>
 	/// Gets the four exit rooms.
 	/// </summary>
 	/// <returns>The four exit rooms.</returns>
-	public IEnumerable<GameObject> GetFourExitRooms() {
-		return MazeObjects.Where (o => o.name.Equals ("allWayRoom"));
+	public IEnumerable<IRoom> GetFourExitRooms() {
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Equals ("allWayRoom"));
 	}
 
 	/// <summary>
@@ -265,20 +339,39 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	private void CreateGoal() {
 		var deadEnds = GetDeadEnds()
-			.OrderByDescending (o => o.transform.position.magnitude)
+			.OrderByDescending (o => o.GameObject.transform.position.magnitude)
 			.Take (3);
 		var goalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
-		Goal = Instantiate (GoalPrefab, goalRoom.transform.position, Quaternion.identity) as GameObject;
+		GoalPos = Convert.WorldToUnit(goalRoom.GameObject.transform.position);
+
+		Goal = Instantiate (GoalPrefab, goalRoom.GameObject.transform.position, Quaternion.identity) as GameObject;
+		//Goal.transform.parent = goalRoom.GameObject.transform;
+	}
+
+	private int RoomId(int x, int y) {
+		var xpart = (x << DescriptionMasks.XShift) & DescriptionMasks.PositionX;
+		var ypart = (y << DescriptionMasks.YShift) & DescriptionMasks.PositionY;
+		return xpart + ypart;
+	}
+
+	private int RoomId(Point2D p) {
+		return RoomId (p.X, p.Y);
+	}
+	
+	private void AddRoom(int x, int y, IRoom room) {
+		Rooms [RoomId (x,y)] = room;
+	}
+	private IRoom GetRoom(Point2D pos) {
+		return Rooms [RoomId (pos.X, pos.Y)];
 	}
 
 	private void SpawnCollectables(int count, int type) {
-		var goalPos = Convert.WorldToUnit (Goal.transform.position);
 		for (var i = 0; i < count; ++i) {
 			var pos = MazeRandom.Next (MaxPoint);
-			while(pos == goalPos) {
+			while(pos == GoalPos) {
 				pos = MazeRandom.Next (MaxPoint);
 			}
-			MazeObjects.Add (CollectableManager.SpawnCollectable(pos,type));
+			GetRoom (pos).AddCollectable(CollectableManager.SpawnCollectable (type));
 		}
 	}
 
@@ -289,6 +382,7 @@ public class WorldGenerator : MonoBehaviour {
 	private void CreateTimeBoosts(int count) {
 		SpawnCollectables(count,CollectableConstants.TimeBoostId);
 	}
+
 
 	/// <summary>
 	/// Generates the Maze. Public entry point for the maze generation.
