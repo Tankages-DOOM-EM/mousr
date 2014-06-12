@@ -1,7 +1,7 @@
 mousr
 -----
 
-A top-down maze game built with [Unity](http://unity3d.com/unity/whats-new). 
+A top-down maze game built with [Unity](http://unity3d.com/unity/whats-new).
 
 Controls
 --------
@@ -23,7 +23,7 @@ Features
   - :white_check_mark: coins
   - :white_check_mark: time boost
 - :white_large_square: Fog of War
-- :white_large_square: Doors & switches/keys
+- :white_check_mark: Doors & switches/keys
 - :white_large_square: effects
   - :white_large_square: score/point text w/ fade for collect
   - :white_large_square: coin collect
