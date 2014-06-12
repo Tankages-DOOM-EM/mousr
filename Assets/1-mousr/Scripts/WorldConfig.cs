@@ -8,4 +8,5 @@ public class WorldConfig {
 
 	public int CoinCount { get; set; }
 	public int TimeBoostCount { get; set; }
+	public bool BlueDoor { get; set; }
 }

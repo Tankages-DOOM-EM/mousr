@@ -60,7 +60,7 @@ GameObject:
   - 61: {fileID: 6100000}
   - 61: {fileID: 6100004}
   m_Layer: 0
-  m_Name: northAndEastRoom
+  m_Name: CornerRoom
   m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

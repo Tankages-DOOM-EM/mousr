@@ -77,7 +77,7 @@ GameObject:
   - 61: {fileID: 6100006}
   - 61: {fileID: 6100000}
   m_Layer: 0
-  m_Name: allWayRoom
+  m_Name: AllWayRoom
   m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

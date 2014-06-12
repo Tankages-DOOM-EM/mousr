@@ -25,11 +25,11 @@ public class Room : IRoom {
 	// TOTAL BITS IN USE: 20bits
 	public int Description { get; private set; }
 
-	public List<ICollectable> Children;
+	public List<IMazeObject> Children;
 
 	public Room(GameObject prefab, int x, int y, int direction) {
-		Children = new List<ICollectable> ();
-		GameObject = prefab;//GameObject.Instantiate (prefab) as GameObject;
+		Children = new List<IMazeObject> ();
+		GameObject = prefab;
 		Description = direction;
 		Description |= DescribePosition (x, y);
 	}
@@ -114,5 +114,11 @@ public class Room : IRoom {
 			IncrementTimeBoosts();
 			break;
 		}
+	}
+
+	public void AddChildObject(IMazeObject child) {
+		child.GameObject.transform.parent = GameObject.transform;
+		child.GameObject.transform.localPosition = Vector3.zero;
+		Children.Add (child);
 	}
 }

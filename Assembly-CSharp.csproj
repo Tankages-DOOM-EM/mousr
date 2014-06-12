@@ -49,7 +49,6 @@
      <Compile Include="Assets\1-mousr\Scripts\CameraFollow.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Collectable.cs" />
      <Compile Include="Assets\1-mousr\Scripts\CollectableConstants.cs" />
-     <Compile Include="Assets\1-mousr\Scripts\CollectableManager.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Collector.cs" />
      <Compile Include="Assets\1-mousr\Scripts\Convert.cs" />
      <Compile Include="Assets\1-mousr\Scripts\DescriptionMasks.cs" />

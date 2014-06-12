@@ -21,25 +21,35 @@ public class Collector : MonoBehaviour {
 		case "Goal":
 			HandleGoal(other.gameObject);
 			return;
+		case "BlueSwitch":
+			HandleBlueSwitch(other.gameObject);
+			return;
 		default:
 			break;
 		}
 	}
 
+	private void HandleCoin(GameObject coin) {
+		Destroy (coin);
+		ScoreManager.AddCoinScore ();
+	}
+	
 	private void HandleTimeBoost (GameObject timeBoost) {
 		Destroy (timeBoost);
 		Timer.AddTime (15);
 	}
-
+	
 	private void HandleGoal(GameObject goal) {
 		Destroy (goal);
 		ScoreManager.AddGoalScore ();
 		ScoreManager.AddTimeBonus (Timer.TimeRemaining);
 	}
-
-	private void HandleCoin(GameObject coin) {
-		Destroy (coin);
-		ScoreManager.AddCoinScore ();
+	
+	private void HandleBlueSwitch (GameObject blue) {
+		Destroy (blue);
+		var door = GameObject.FindWithTag ("BlueDoor");
+		Debug.Log (door);
+		Destroy(door);
 	}
 	
 }

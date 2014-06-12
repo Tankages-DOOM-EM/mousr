@@ -13,7 +13,6 @@ public class WorldGenerator : MonoBehaviour {
 	public enum Mode {Newest = 1, Random};
 	public Mode CurrentMode = Mode.Newest;
 	public GameObject GoalPrefab;
-	public GameObject Goal = null;
 	public Point2D GoalPos;
 	public Vector3 RotationAxis = new Vector3 (0, 0, -1);
 
@@ -28,9 +27,9 @@ public class WorldGenerator : MonoBehaviour {
 	
 	// dead end
 	//
-	// +  +
-	// |  |
 	// +--+
+	// |  |
+	// +  +
 	public GameObject DeadEndPrefab;
 	
 	// hallway
@@ -61,10 +60,15 @@ public class WorldGenerator : MonoBehaviour {
 	// +  +
 	public GameObject AllWayPrefab;
 
-	public CollectableManager CollectableManager;
+	public GameObject CoinPrefab;
+	public GameObject TimeBoostPrefab;
+	public GameObject BlueSwitchPrefab;
+	public GameObject BlueDoorPrefab;
+
+	private IRoom GoalRoom;
+	private GameObject Goal;
 
 	void Start() {
-		CollectableManager = gameObject.GetComponent<CollectableManager> ();
 		if (Direction.SouthEast.HasExit (Direction.North)) {
 			Debug.LogError("South East should not have North!");
 		}
@@ -262,8 +266,7 @@ public class WorldGenerator : MonoBehaviour {
 			rotation = GetThreeExitOrientation (directions);
 			break;
 		}
-		//Debug.Log (string.Format ("exits: {0}{1}{2}{3}", directions.HasExit(Direction.North)?"N": "-", directions.HasExit(Direction.East)?"E": "-", directions.HasExit(Direction.South)?"S": "-", directions.HasExit(Direction.West)?"W": "-"));
-		//Debug.Log(string.Format("angle: {0}", rotation.eulerAngles.z));
+
 		return rotation;
 	}
 
@@ -299,7 +302,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The dead ends.</returns>
 	public IEnumerable<IRoom> GetDeadEnds() {
-		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Contains ("DeadEnd"));
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.IsDeadEnd ());//o.GameObject.name.Equals("DeadEndRoom"));
 	}
 
 	/// <summary>
@@ -307,7 +310,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The hallways.</returns>
 	public IEnumerable<IRoom> GetHallways() {
-		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.EndsWith ("Corridor"));
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.IsHallway());
 	}
 
 	/// <summary>
@@ -315,7 +318,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The three exit rooms.</returns>
 	public IEnumerable<IRoom> GetThreeExitRooms() {
-		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.StartsWith ("allExcept"));
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.ExitCount () == 3);
 	}
 
 	/// <summary>
@@ -323,7 +326,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The corner rooms.</returns>
 	public IEnumerable<IRoom> GetCornerRooms() {
-		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Contains ("And"));
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.IsCorner());
 	}
 
 	/// <summary>
@@ -331,7 +334,7 @@ public class WorldGenerator : MonoBehaviour {
 	/// </summary>
 	/// <returns>The four exit rooms.</returns>
 	public IEnumerable<IRoom> GetFourExitRooms() {
-		return Rooms.Select (kvp => kvp.Value).Where (o => o.GameObject.name.Equals ("allWayRoom"));
+		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.ExitCount () == 4);
 	}
 
 	/// <summary>
@@ -341,11 +344,12 @@ public class WorldGenerator : MonoBehaviour {
 		var deadEnds = GetDeadEnds()
 			.OrderByDescending (o => o.GameObject.transform.position.magnitude)
 			.Take (3);
-		var goalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
-		GoalPos = Convert.WorldToUnit(goalRoom.GameObject.transform.position);
+		Debug.Log (deadEnds.Count ());
+		GoalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
+		GoalPos = Convert.WorldToUnit(GoalRoom.GameObject.transform.position);
 
-		Goal = Instantiate (GoalPrefab, goalRoom.GameObject.transform.position, Quaternion.identity) as GameObject;
-		//Goal.transform.parent = goalRoom.GameObject.transform;
+		Goal = Instantiate (GoalPrefab, GoalRoom.GameObject.transform.position, Quaternion.identity) as GameObject;
+
 	}
 
 	private int RoomId(int x, int y) {
@@ -365,24 +369,29 @@ public class WorldGenerator : MonoBehaviour {
 		return Rooms [RoomId (pos.X, pos.Y)];
 	}
 
-	private void SpawnCollectables(int count, int type) {
+	private void CreateCollectables(int count, int type, GameObject prefab) {
 		for (var i = 0; i < count; ++i) {
 			var pos = MazeRandom.Next (MaxPoint);
 			while(pos == GoalPos) {
 				pos = MazeRandom.Next (MaxPoint);
 			}
-			GetRoom (pos).AddCollectable(CollectableManager.SpawnCollectable (type));
+			var collectable = new Collectable(type, Instantiate (prefab) as GameObject);
+			GetRoom (pos).AddCollectable(collectable);
 		}
 	}
 
 	private void CreateCoins(int count) {
-		SpawnCollectables(count,CollectableConstants.CoinId);
+		CreateCollectables(count,CollectableConstants.CoinId, CoinPrefab);
 	}
 
 	private void CreateTimeBoosts(int count) {
-		SpawnCollectables(count,CollectableConstants.TimeBoostId);
+		CreateCollectables(count,CollectableConstants.TimeBoostId, TimeBoostPrefab);
 	}
 
+	private void CreateBlueDoor() {
+		GoalRoom.AddChildObject (new MazeObject (Instantiate (BlueDoorPrefab) as GameObject));
+		CreateCollectables (1, CollectableConstants.BlueSwitchId, BlueSwitchPrefab);
+	}
 
 	/// <summary>
 	/// Generates the Maze. Public entry point for the maze generation.
@@ -417,6 +426,10 @@ public class WorldGenerator : MonoBehaviour {
 		CreateCoins (config.CoinCount);
 		
 		CreateTimeBoosts (config.TimeBoostCount);
+
+		if (config.BlueDoor) {
+			CreateBlueDoor ();
+		}
 	}
 
 }

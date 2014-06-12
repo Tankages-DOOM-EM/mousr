@@ -20,22 +20,22 @@ public class LevelManager : MonoBehaviour
 
 	public WorldConfig GetLevelConfig (int level) 
 	{
-		int width = WorldSize,
-			height = WorldSize,
-			coinCount = 10,
-			timeBoostCount = 2;
-		
+		WorldConfig wc = new WorldConfig {
+			Width = WorldSize,
+			Height = WorldSize,
+			CoinCount = 10,
+			TimeBoostCount = 2,
+			BlueDoor = false
+		};
+		if (level == 1) {
+			wc.BlueDoor = true;
+		}
 		if(level == 3) {
-			width = 15;
-			height = 4;
+			wc.Width = 15;
+			wc.Height = 4;
 		}
 
-		return new WorldConfig {
-			Width = width,
-			Height = height,
-			CoinCount = coinCount,
-			TimeBoostCount = timeBoostCount
-		};
+		return wc;
 	}
 
 	public void LoadLevel(int level) {
