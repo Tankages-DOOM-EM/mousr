@@ -66,7 +66,6 @@ public class WorldGenerator : MonoBehaviour {
 	public GameObject BlueDoorPrefab;
 
 	private IRoom GoalRoom;
-	private GameObject Goal;
 
 	void Start() {
 		if (Direction.SouthEast.HasExit (Direction.North)) {
@@ -165,19 +164,16 @@ public class WorldGenerator : MonoBehaviour {
 	/// <returns>The new game object.</returns>
 	/// <param name="exitDefinition">Integer describing all possible exits from a cell.</param>
 	private GameObject CreateGameObjectFromExitDefinition(int exitDefinition) {
-		var exitCount = (exitDefinition & DescriptionMasks.Direction).SumBits32 ();
+		var exitCount = exitDefinition.ExitCount ();
 
 		switch (exitCount) {
 		case 1:
 			return Instantiate(DeadEndPrefab) as GameObject;
 
 		case 2:
-			Debug.Log (string.Format ("exits: {0}{1}{2}{3}", exitDefinition.HasExit(Direction.North)?"N": "-", exitDefinition.HasExit(Direction.East)?"E": "-", exitDefinition.HasExit(Direction.South)?"S": "-", exitDefinition.HasExit(Direction.West)?"W": "-"));
 			if(exitDefinition.HasExit(Direction.NorthSouth) || exitDefinition.HasExit (Direction.WestEast)) {
-				Debug.Log ("hallway");
 				return Instantiate(HallwayPrefab) as GameObject;
 			}
-			Debug.Log ("Corner");
 			return Instantiate(CornerPrefab) as GameObject;
 
 		case 3:
@@ -291,7 +287,6 @@ public class WorldGenerator : MonoBehaviour {
 	/// Destroy existing maze objects and clears the maze object array.
 	/// </summary>
 	private void ClearMazeObjects() {
-		Destroy (Goal);
 		Rooms.Select(p => p.Value).ToList ().ForEach(r => r.Destroy ());
 		
 		Rooms.Clear ();
@@ -337,18 +332,42 @@ public class WorldGenerator : MonoBehaviour {
 		return Rooms.Select (kvp => kvp.Value).Where (o => o.Description.ExitCount () == 4);
 	}
 
+	private IEnumerable<IRoom> GetPossibleGoals() {
+		var rooms = GetDeadEnds ();
+		if (rooms.Count () > 0) {
+			return rooms;
+		}
+
+		rooms = GetCornerRooms ();
+		if (rooms.Count () > 0) {
+			return rooms;
+		}
+
+		rooms = GetThreeExitRooms ();
+		if (rooms.Count () > 0) {
+			return rooms;
+		}
+		
+		rooms = GetHallways ();
+		if (rooms.Count () > 0) {
+			return rooms;
+		}
+
+		return GetFourExitRooms ();
+	}
+
 	/// <summary>
 	/// Chooses the goal room.
 	/// </summary>
 	private void CreateGoal() {
-		var deadEnds = GetDeadEnds()
+		var possibleGoals = GetPossibleGoals ()
 			.OrderByDescending (o => o.GameObject.transform.position.magnitude)
 			.Take (3);
-		Debug.Log (deadEnds.Count ());
-		GoalRoom = deadEnds.ElementAt (MazeRandom.Next (0, deadEnds.Count ()));
+		GoalRoom = possibleGoals.ElementAt (MazeRandom.Next (0, possibleGoals.Count ()));
+		Debug.Log (GoalRoom.GameObject.transform.position);
 		GoalPos = Convert.WorldToUnit(GoalRoom.GameObject.transform.position);
-
-		Goal = Instantiate (GoalPrefab, GoalRoom.GameObject.transform.position, Quaternion.identity) as GameObject;
+		Debug.Log (GoalPos);
+		GoalRoom.AddChildObject (new MazeObject (Instantiate (GoalPrefab) as GameObject));
 
 	}
 
@@ -375,6 +394,8 @@ public class WorldGenerator : MonoBehaviour {
 			while(pos == GoalPos) {
 				pos = MazeRandom.Next (MaxPoint);
 			}
+
+			Debug.Log (pos);
 			var collectable = new Collectable(type, Instantiate (prefab) as GameObject);
 			GetRoom (pos).AddCollectable(collectable);
 		}

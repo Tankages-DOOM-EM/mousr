@@ -35,4 +35,16 @@ public class Point2D {
 	public static bool operator>(Point2D lhs, Point2D rhs) {
 		return lhs.X > rhs.X && lhs.Y > rhs.Y;
 	}
+	
+	public static bool operator==(Point2D lhs, Point2D rhs) {
+		return lhs.X == rhs.X && lhs.Y == rhs.Y;
+	}
+	
+	public static bool operator!=(Point2D lhs, Point2D rhs) {
+		return lhs.X != rhs.X || lhs.Y != rhs.Y;
+	}
+
+	public override string ToString() {
+		return string.Format ("X: {0}, Y: {1}", this.X.ToString("D2"), this.Y.ToString("D2"));
+	}
 }

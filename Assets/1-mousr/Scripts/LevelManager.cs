@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class LevelManager : MonoBehaviour
 {
 	public int CurrentLevel = 0;
-	public int WorldSize = 8;
+	public int WorldSize = 10;
 	public GameObject LevelText;
 	private WorldGenerator WorldGenerator;
 
@@ -27,12 +27,30 @@ public class LevelManager : MonoBehaviour
 			TimeBoostCount = 2,
 			BlueDoor = false
 		};
-		if (level == 1) {
-			wc.BlueDoor = true;
-		}
-		if(level == 3) {
-			wc.Width = 15;
+		switch (level) {
+		case 1:
+			wc.Width = 6;
 			wc.Height = 4;
+			wc.TimeBoostCount = 0;
+			wc.CoinCount = 0;
+			break;
+		case 2:
+			wc.Width = 5;
+			wc.Height = 5;
+			wc.TimeBoostCount = 0;
+			wc.CoinCount = 5;
+			break;
+		case 3:
+			wc.Width = 8;
+			wc.Height = 8;
+			break;
+		case 4:
+			wc.BlueDoor = true;
+			break;
+		case 5:
+			wc.Width = 15;
+			wc.Height = 5;
+			break;
 		}
 
 		return wc;

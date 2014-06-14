@@ -13,7 +13,7 @@ public class Convert : MonoBehaviour {
 	}
 	
 	public static Point2D WorldToUnit(float x, float y) {
-		return new Point2D ((int)System.Math.Floor(x / Convert.WorldCoordPerUnit * -1.0f), (int)System.Math.Floor(y / Convert.WorldCoordPerUnit * -1.0f));
+		return new Point2D ((int)System.Math.Floor(x / Convert.WorldCoordPerUnit), (int)System.Math.Floor(y / Convert.WorldCoordPerUnit * -1.0f));
 	}
 	
 	public static Point2D WorldToUnit(Vector3 pos) {

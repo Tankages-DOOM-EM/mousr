@@ -8,7 +8,7 @@ public static class RoomDescriptionExtensions
 	}
 
 	public static int ExitCount(this int roomDescription) {
-		return (roomDescription & DescriptionMasks.Direction);
+		return (roomDescription & DescriptionMasks.Direction).SumBits32 ();
 	}
 
 	public static bool IsHallway(this int roomDescription) {
@@ -17,14 +17,11 @@ public static class RoomDescriptionExtensions
 	}
 	
 	public static bool IsCorner(this int roomDescription) {
-		return roomDescription.ExitCount() == 2 && 
-			(roomDescription.HasExit (Direction.NorthSouth) || roomDescription.HasExit (Direction.WestEast));
+		return roomDescription.ExitCount () == 2 && !roomDescription.IsHallway ();
 	}
 	
 	public static bool IsDeadEnd(this int roomDescription) {
-		return roomDescription.ExitCount() == 2 
-			&& !roomDescription.HasExit (Direction.NorthSouth) 
-			&& !roomDescription.HasExit (Direction.WestEast);
+		return roomDescription.ExitCount() == 1;
 	}
 }
 
