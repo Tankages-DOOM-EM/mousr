@@ -7,7 +7,7 @@ public class Collector : MonoBehaviour {
 
 	void Start () {
 		ScoreManager = gameObject.GetComponent<ScoreManager> ();
-		Timer = GameObject.Find ("Timer").GetComponent<Timer> ();
+		Timer = gameObject.GetComponent<Timer> ();
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
@@ -48,7 +48,6 @@ public class Collector : MonoBehaviour {
 	private void HandleBlueSwitch (GameObject blue) {
 		Destroy (blue);
 		var door = GameObject.FindWithTag ("BlueDoor");
-		Debug.Log (door);
 		Destroy(door);
 	}
 	

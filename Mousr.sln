@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{1616EC78-A11F-0B44-79F5-9D3933DD2D9E}") = "Mousr", "Assembly-CSharp.csproj", "{36B01B24-EF1A-57C4-D80E-D2B44DD2352A}"
 EndProject
+Project("{1616EC78-A11F-0B44-79F5-9D3933DD2D9E}") = "Mousr", "Assembly-CSharp-Editor.csproj", "{E73DFCF9-1D63-DDAD-8A49-E928C8FE9F4D}"
+EndProject
+Project("{1616EC78-A11F-0B44-79F5-9D3933DD2D9E}") = "Mousr", "Assembly-UnityScript.unityproj", "{D235B899-74C7-0649-4FAF-B5C306AB0314}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +17,19 @@ Global
 		{36B01B24-EF1A-57C4-D80E-D2B44DD2352A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36B01B24-EF1A-57C4-D80E-D2B44DD2352A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36B01B24-EF1A-57C4-D80E-D2B44DD2352A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E73DFCF9-1D63-DDAD-8A49-E928C8FE9F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E73DFCF9-1D63-DDAD-8A49-E928C8FE9F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E73DFCF9-1D63-DDAD-8A49-E928C8FE9F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E73DFCF9-1D63-DDAD-8A49-E928C8FE9F4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D235B899-74C7-0649-4FAF-B5C306AB0314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D235B899-74C7-0649-4FAF-B5C306AB0314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D235B899-74C7-0649-4FAF-B5C306AB0314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D235B899-74C7-0649-4FAF-B5C306AB0314}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																																		GlobalSection(MonoDevelopProperties) = preSolution
+																																																																			GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

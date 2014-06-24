@@ -25,7 +25,7 @@ public class Direction {
 	public static int[] Shuffled = null;
 
 	public static void Shuffle() {
-		Shuffled = Shuffled != null ? Shuffled : new int[4]{North, East,South, West};
+		Shuffled = Shuffled != null ? Shuffled : new int[4];
 		Shuffled [0] = North;
 		Shuffled [1] = East;
 		Shuffled [2] = South;

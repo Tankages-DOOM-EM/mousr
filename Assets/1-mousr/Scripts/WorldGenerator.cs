@@ -64,6 +64,7 @@ public class WorldGenerator : MonoBehaviour {
 	public GameObject TimeBoostPrefab;
 	public GameObject BlueSwitchPrefab;
 	public GameObject BlueDoorPrefab;
+	public GameObject HelpTipPrefab;
 
 	private IRoom GoalRoom;
 
@@ -359,15 +360,18 @@ public class WorldGenerator : MonoBehaviour {
 	/// <summary>
 	/// Chooses the goal room.
 	/// </summary>
-	private void CreateGoal() {
+	private void CreateGoal(bool showTip) {
 		var possibleGoals = GetPossibleGoals ()
 			.OrderByDescending (o => o.GameObject.transform.position.magnitude)
 			.Take (3);
 		GoalRoom = possibleGoals.ElementAt (MazeRandom.Next (0, possibleGoals.Count ()));
-		Debug.Log (GoalRoom.GameObject.transform.position);
+
 		GoalPos = Convert.WorldToUnit(GoalRoom.GameObject.transform.position);
-		Debug.Log (GoalPos);
-		GoalRoom.AddChildObject (new MazeObject (Instantiate (GoalPrefab) as GameObject));
+		var goal = new Collectable (CollectableConstants.GoalId, Instantiate (GoalPrefab) as GameObject);
+		if(showTip) {
+			InitHelpTipForCollectable(CollectableConstants.GoalId);
+		}
+		GoalRoom.AddCollectable (goal);
 
 	}
 
@@ -395,23 +399,40 @@ public class WorldGenerator : MonoBehaviour {
 				pos = MazeRandom.Next (MaxPoint);
 			}
 
-			Debug.Log (pos);
 			var collectable = new Collectable(type, Instantiate (prefab) as GameObject);
 			GetRoom (pos).AddCollectable(collectable);
 		}
 	}
 
-	private void CreateCoins(int count) {
+	private void InitHelpTipForCollectable(int type) {
+		var helpTip = GameObject.Find ("HelpTipDetector").GetComponent<HelpTip2> ();
+		helpTip.Text = Collectable.GetHelpTipText (type);
+		helpTip.Offset = Collectable.GetHelpTipOffset (type);
+		helpTip.Size = Collectable.GetHelpTipSize (type);
+		helpTip.ObjectTagToTip = Collectable.GetHelpTipTag (type);
+	}
+
+	private void CreateCoins(int count, bool showTip) {
 		CreateCollectables(count,CollectableConstants.CoinId, CoinPrefab);
+		if (showTip) {
+			InitHelpTipForCollectable (CollectableConstants.CoinId);
+		}
 	}
 
-	private void CreateTimeBoosts(int count) {
+	private void CreateTimeBoosts(int count, bool showTip) {
 		CreateCollectables(count,CollectableConstants.TimeBoostId, TimeBoostPrefab);
+		if (showTip) {
+			InitHelpTipForCollectable (CollectableConstants.TimeBoostId);
+		}
 	}
 
-	private void CreateBlueDoor() {
+	private void CreateBlueDoor(bool showTip) {
 		GoalRoom.AddChildObject (new MazeObject (Instantiate (BlueDoorPrefab) as GameObject));
 		CreateCollectables (1, CollectableConstants.BlueSwitchId, BlueSwitchPrefab);
+		
+		if (showTip) {
+			InitHelpTipForCollectable (CollectableConstants.BlueSwitchId);
+		}
 	}
 
 	/// <summary>
@@ -428,6 +449,10 @@ public class WorldGenerator : MonoBehaviour {
 		});
 	}
 
+	public void DestroyWorld() {
+		ClearMazeObjects ();
+	}
+
 	public void GenerateWorld(WorldConfig config) {
 		MaxPoint = new Point2D (config.Width, config.Height);
 		MinPoint = new Point2D (); // (0,0)
@@ -442,14 +467,14 @@ public class WorldGenerator : MonoBehaviour {
 		
 		CreateRoomGameObjects ();
 		
-		CreateGoal ();
+		CreateGoal (config.GoalTip);
 		
-		CreateCoins (config.CoinCount);
+		CreateCoins (config.CoinCount, config.CoinTip);
 		
-		CreateTimeBoosts (config.TimeBoostCount);
+		CreateTimeBoosts (config.TimeBoostCount, config.TimeBoostTip);
 
 		if (config.BlueDoor) {
-			CreateBlueDoor ();
+			CreateBlueDoor (config.SwitchTip);
 		}
 	}
 

@@ -43,6 +43,19 @@ public class Point2D {
 	public static bool operator!=(Point2D lhs, Point2D rhs) {
 		return lhs.X != rhs.X || lhs.Y != rhs.Y;
 	}
+	
+	public bool Equals(Point2D rhs) {
+		return rhs != null && this == rhs;
+	}
+	
+	public override bool Equals(System.Object rhs) {
+
+		return rhs != null && this == (Point2D)rhs;
+	}
+
+	public override int GetHashCode() {
+		return this.X ^ this.Y;
+	}
 
 	public override string ToString() {
 		return string.Format ("X: {0}, Y: {1}", this.X.ToString("D2"), this.Y.ToString("D2"));
